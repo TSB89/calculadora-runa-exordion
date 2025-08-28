@@ -1,28 +1,32 @@
 const runes = [
-    { name: "Light Magic Missile", cost: 0, mana: 30, quantity: 10 },
-    { name: "Poison Field", cost: 20, mana: 50, quantity: 3 },
-    { name: "Destroy Field", cost: 50, mana: 60, quantity: 3 },
-    { name: "Fire Field", cost: 30, mana: 60, quantity: 3 },
-    { name: "Fireball", cost: 30, mana: 60, quantity: 6 },
-    { name: "Energy Field", cost: 30, mana: 80, quantity: 3 },
-    { name: "Desintegrate", cost: 20, mana: 100, quantity: 3 },
-    { name: "Envenom", cost: 20, mana: 100, quantity: 2 },
-    { name: "Soulfire", cost: 30, mana: 150, quantity: 3 },
-    { name: "Poison Wall", cost: 20, mana: 160, quantity: 4 },
-    { name: "Explosion", cost: 20, mana: 180, quantity: 3 },
-    { name: "Fire Wall", cost: 30, mana: 200, quantity: 4 },
-    { name: "Energy Wall", cost: 30, mana: 250, quantity: 4 },
-    { name: "Animate Dead", cost: 20, mana: 300, quantity: 2 },
-    { name: "Icicle", cost: 30, mana: 80, quantity: 5 },
-    { name: "Avalanche", cost: 30, mana: 140, quantity: 2 },
-    { name: "Chameleon", cost: 20, mana: 150, quantity: 3 },
-    { name: "Sudden Death", cost: 50, mana: 220, quantity: 1 },
-    { name: "Energy Bomb", cost: 50, mana: 220, quantity: 2 },
-    { name: "Magic Wall", cost: 40, mana: 250, quantity: 3 },
-    { name: "Great Fireball", cost: 30, mana: 120, quantity: 2 },
-    { name: "Fire Bomb", cost: 30, mana: 150, quantity: 2 },
-    { name: "Heavy Magic Missile", cost: 20, mana: 70, quantity: 5 },
-    { name: "Ultimate Healing", cost: 30, mana: 100, quantity: 1 }
+    { name: "Light Magic Missile", altName: "Adori", cost: 0, mana: 30, quantity: 10 },
+    { name: "Heavy Magic Missile", altName: "Adori gran", cost: 20, mana: 70, quantity: 5 },
+    { name: "Icicle", altName: "Adori gran frigo", cost: 30, mana: 80, quantity: 5 },
+    { name: "Sudden Death", altName: "Adori vita vis", cost: 50, mana: 220, quantity: 1 },
+    { name: "Intense Healing", altName: "Adura gran", cost: 50, mana: 60, quantity: 1 },
+    { name: "Ultimate Healing", altName: "Adura vita", cost: 30, mana: 100, quantity: 1 },
+    { name: "Fireball", altName: "Adori flam", cost: 30, mana: 60, quantity: 6 },
+    { name: "Great Fireball", altName: "Adori gran flam", cost: 30, mana: 120, quantity: 2 },
+    { name: "Avalanche", altName: "Adori mas frigo", cost: 30, mana: 140, quantity: 2 },
+    { name: "Magic Wall", altName: "Adevo grav tera", cost: 40, mana: 250, quantity: 3 },
+    { name: "Destroy Field", altName: "Adito grav", cost: 50, mana: 60, quantity: 3 },
+    { name: "Desintegrate", altName: "Adito tera", cost: 20, mana: 100, quantity: 3 },
+    { name: "Poison Field", altName: "Adevo grav pox", cost: 20, mana: 50, quantity: 3 },
+    { name: "Fire Field", altName: "Adevo grav flam", cost: 30, mana: 60, quantity: 3 },
+    { name: "Energy Field", altName: "Adevo grav vis", cost: 30, mana: 80, quantity: 3 },
+    { name: "Envenom", altName: "Adevo res pox", cost: 20, mana: 100, quantity: 2 },
+    { name: "Soulfire", altName: "Adevo res flam", cost: 30, mana: 150, quantity: 3 },
+    { name: "Paralyze", altName: "Adana ani", cost: 30, mana: 600, quantity: 1 },
+    { name: "Explosion", altName: "Adevo mas hur", cost: 20, mana: 180, quantity: 3 },
+    { name: "Poison Wall", altName: "Adevo mas grav pox", cost: 20, mana: 160, quantity: 4 },
+    { name: "Fire Wall", altName: "Adevo mas grav flam", cost: 30, mana: 200, quantity: 4 },
+    { name: "Energy Wall", altName: "Adevo mas grav vis", cost: 30, mana: 250, quantity: 4 },
+    { name: "Poison Bomb", altName: "Adevo mas pox", cost: 20, mana: 130, quantity: 2 },
+    { name: "Fire Bomb", altName: "Adevo mas flam", cost: 30, mana: 150, quantity: 2 },
+    { name: "Energy Bomb", altName: "Adevo mas vis", cost: 50, mana: 220, quantity: 2 },
+    { name: "Chameleon", altName: "Adevo ina", cost: 20, mana: 150, quantity: 3 },
+    { name: "Convince Creature", altName: "Adeta sio", cost: 20, mana: 100, quantity: 1 },
+    { name: "Animate Dead", altName: "Adana mort", cost: 20, mana: 300, quantity: 2 }
 ];
 
 function calculateManaRegen() {
@@ -61,7 +65,10 @@ function createRuneCard(rune, index) {
     
     return `
         <div class="rune-card" id="rune-${index}">
-            <div class="rune-name">${rune.name}</div>
+            <div class="rune-name">
+                ${rune.name}
+                ${rune.altName ? `<span class="alt-name">(${rune.altName})</span>` : ''}
+            </div>
             <div class="rune-details">
                 <div class="detail-item">
                     <strong>Custo:</strong> ${rune.cost}gp
