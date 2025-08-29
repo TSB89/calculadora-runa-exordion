@@ -29,6 +29,20 @@ const runes = [
     { name: "Animate Dead", altName: "Adana mort", cost: 20, mana: 300, quantity: 2 }
 ];
 
+const safezonePackages = [
+    { hours: 6, coins: 3 },
+    { hours: 12, coins: 5 },
+    { hours: 24, coins: 9 },
+    { hours: 72, coins: 15 },
+    { hours: 168, coins: 25 },
+    { hours: 720, coins: 90 }
+];
+
+// Função para formatar números com separador de milhares
+function formatNumber(num) {
+    return Math.abs(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
 function calculateManaRegen() {
     let totalManaPerHour = 0;
     
@@ -139,7 +153,7 @@ function calculateRunes() {
         profitPerRuneElement.className = `result-value ${profitPerRune > 0 ? 'positive' : profitPerRune < 0 ? 'negative' : 'neutral'}`;
         
         const profitPerHourElement = document.getElementById(`profit-per-hour-${index}`);
-        profitPerHourElement.textContent = Math.floor(profitPerHour) + 'gp';
+        profitPerHourElement.textContent = formatNumber(Math.floor(profitPerHour)) + 'gp';
         profitPerHourElement.className = `result-value ${profitPerHour > 0 ? 'positive' : profitPerHour < 0 ? 'negative' : 'neutral'}`;
     });
     
@@ -165,7 +179,7 @@ function updateRanking(runeResults) {
     // First place
     if (runeResults.length > 0 && runeResults[0].profitPerHour > 0) {
         document.getElementById('best-rune-name').textContent = runeResults[0].name;
-        document.getElementById('best-rune-profit').textContent = Math.floor(runeResults[0].profitPerHour) + ' gp/hora';
+        document.getElementById('best-rune-profit').textContent = formatNumber(Math.floor(runeResults[0].profitPerHour)) + ' gp/hora';
     } else {
         document.getElementById('best-rune-name').textContent = 'Selecione preços para ver resultados';
         document.getElementById('best-rune-profit').textContent = '-';
@@ -174,7 +188,7 @@ function updateRanking(runeResults) {
     // Second place
     if (runeResults.length > 1 && runeResults[1].profitPerHour > 0) {
         document.getElementById('second-rune-name').textContent = runeResults[1].name;
-        document.getElementById('second-rune-profit').textContent = Math.floor(runeResults[1].profitPerHour) + ' gp/h';
+        document.getElementById('second-rune-profit').textContent = formatNumber(Math.floor(runeResults[1].profitPerHour)) + ' gp/h';
     } else {
         document.getElementById('second-rune-name').textContent = '-';
         document.getElementById('second-rune-profit').textContent = '-';
@@ -183,10 +197,76 @@ function updateRanking(runeResults) {
     // Third place
     if (runeResults.length > 2 && runeResults[2].profitPerHour > 0) {
         document.getElementById('third-rune-name').textContent = runeResults[2].name;
-        document.getElementById('third-rune-profit').textContent = Math.floor(runeResults[2].profitPerHour) + ' gp/h';
+        document.getElementById('third-rune-profit').textContent = formatNumber(Math.floor(runeResults[2].profitPerHour)) + ' gp/h';
     } else {
         document.getElementById('third-rune-name').textContent = '-';
         document.getElementById('third-rune-profit').textContent = '-';
+    }
+    
+    // Recalcular safezone após atualizar o ranking com delay para garantir atualização do DOM
+    setTimeout(() => {
+        calculateSafezone();
+    }, 10);
+}
+
+function calculateSafezone() {
+    const coinPrice = parseFloat(document.getElementById('coin-price').value) || 0;
+    const runeProfileField = document.getElementById('rune-profit-hour');
+    let runeProfitPerHour = parseFloat(runeProfileField.value) || 0;
+    
+    // Só preencher automaticamente se o campo estiver vazio
+    if (runeProfitPerHour === 0) {
+        const bestRuneProfit = document.getElementById('best-rune-profit').textContent;
+        if (bestRuneProfit && bestRuneProfit !== '-') {
+            // Usar regex mais robusta para extrair números decimais
+            const match = bestRuneProfit.match(/(\d+(?:\.\d+)?)/);
+            if (match) {
+                runeProfitPerHour = parseFloat(match[1]);
+                runeProfileField.value = runeProfitPerHour;
+            }
+        }
+    }
+    
+    let bestValue = null;
+    let bestEfficiency = -Infinity;
+    
+    safezonePackages.forEach(pkg => {
+        const totalCost = pkg.coins * coinPrice;
+        const costPerHour = totalCost / pkg.hours;
+        const profitPerHour = runeProfitPerHour - costPerHour;
+        const totalProfit = profitPerHour * pkg.hours;
+        const efficiency = profitPerHour / costPerHour; // Eficiência do investimento
+        
+        // Atualizar displays
+        document.getElementById(`cost-${pkg.hours}`).textContent = formatNumber(Math.round(costPerHour));
+        
+        const profitElement = document.getElementById(`profit-${pkg.hours}`);
+        const safezoneOption = document.querySelector(`[data-hours="${pkg.hours}"]`);
+        
+        if (coinPrice > 0 && runeProfitPerHour > 0) {
+            profitElement.textContent = `${totalProfit >= 0 ? 'Lucro' : 'Prejuízo'}: ${formatNumber(Math.round(totalProfit))} gp`;
+            profitElement.className = `profit-result ${totalProfit >= 0 ? 'positive' : 'negative'}`;
+            
+            // Determinar o melhor custo-benefício
+            if (profitPerHour > 0 && efficiency > bestEfficiency) {
+                bestValue = pkg.hours;
+                bestEfficiency = efficiency;
+            }
+        } else {
+            profitElement.textContent = 'Insira os valores';
+            profitElement.className = 'profit-result';
+        }
+        
+        // Remover destaque anterior
+        safezoneOption.classList.remove('best-value');
+    });
+    
+    // Destacar melhor opção
+    if (bestValue !== null) {
+        const bestOption = document.querySelector(`[data-hours="${bestValue}"]`);
+        if (bestOption) {
+            bestOption.classList.add('best-value');
+        }
     }
 }
 
@@ -195,7 +275,7 @@ function initializeCalculator() {
     const container = document.getElementById('runes-container');
     container.innerHTML = runes.map((rune, index) => createRuneCard(rune, index)).join('');
     
-    // Add event listeners
+    // Add event listeners for character configuration
     document.querySelectorAll('input[name="promotion"]').forEach(radio => {
         radio.addEventListener('change', calculateRunes);
     });
@@ -204,12 +284,18 @@ function initializeCalculator() {
         checkbox.addEventListener('change', calculateRunes);
     });
     
+    // Add event listeners for rune prices
     runes.forEach((_, index) => {
         document.getElementById(`price-${index}`).addEventListener('input', calculateRunes);
     });
     
-    // Initial calculation
+    // Add event listeners for safezone
+    document.getElementById('coin-price').addEventListener('input', calculateSafezone);
+    document.getElementById('rune-profit-hour').addEventListener('input', calculateSafezone);
+    
+    // Initial calculations
     calculateRunes();
+    calculateSafezone();
 }
 
 // Initialize when page loads
