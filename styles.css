@@ -107,15 +107,34 @@ h1 {
     overflow: hidden;
 }
 
-.results-summary::before {
+.safezone-section {
+    background: linear-gradient(145deg, #1a2e1a, #2a5e2a);
+    border: 3px solid #90ee90;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 12px 40px rgba(144, 238, 144, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.results-summary::before,
+.safezone-section::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 5px;
-    background: linear-gradient(90deg, #ffd700, #ffb347, #ffd700);
     animation: shimmer 2s infinite;
+}
+
+.results-summary::before {
+    background: linear-gradient(90deg, #ffd700, #ffb347, #ffd700);
+}
+
+.safezone-section::before {
+    background: linear-gradient(90deg, #90ee90, #32cd32, #90ee90);
 }
 
 @keyframes shimmer {
@@ -125,6 +144,16 @@ h1 {
 
 .results-summary h2 {
     color: #ffd700;
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 25px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.safezone-section h2 {
+    color: #90ee90;
     text-align: center;
     font-size: 2rem;
     margin-bottom: 25px;
@@ -244,6 +273,125 @@ h1 {
     color: #90ee90;
 }
 
+/* Safezone Styles */
+.safezone-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.safezone-config {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.coin-input,
+.profit-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #90ee90;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.5);
+    color: #e0e6ed;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.coin-input:focus,
+.profit-input:focus {
+    outline: none;
+    border-color: #32cd32;
+    box-shadow: 0 0 10px rgba(144, 238, 144, 0.3);
+}
+
+.rune-price-note {
+    font-size: 0.9rem;
+    color: #b0b0b0;
+    margin-top: 8px;
+    font-style: italic;
+    text-align: center;
+}
+
+.safezone-options h3 {
+    color: #90ee90;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+    text-align: center;
+}
+
+.safezone-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.safezone-option {
+    background: linear-gradient(145deg, #2a4a2a, #3a6a3a);
+    border: 2px solid #90ee90;
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.safezone-option:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(144, 238, 144, 0.3);
+}
+
+.safezone-option.best-value {
+    border-color: #ffd700;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.option-header {
+    margin-bottom: 15px;
+}
+
+.option-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #90ee90;
+    margin-bottom: 5px;
+}
+
+.option-coins {
+    font-size: 1rem;
+    color: #87ceeb;
+    font-weight: bold;
+}
+
+.option-results {
+    border-top: 1px solid #90ee90;
+    padding-top: 15px;
+}
+
+.cost-per-hour {
+    font-size: 1rem;
+    color: #e0e6ed;
+    margin-bottom: 8px;
+}
+
+.cost-per-hour span {
+    font-weight: bold;
+    color: #87ceeb;
+}
+
+.profit-result {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.profit-result.positive {
+    color: #90ee90;
+}
+
+.profit-result.negative {
+    color: #ff6b6b;
+}
+
+/* Runes Section */
 .runes-section {
     background: linear-gradient(145deg, #1e1e3a, #2d2d5a);
     border: 2px solid #4a4a7a;
@@ -310,8 +458,8 @@ h1 {
     text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
 }
 
-    .alt-name {
-    font-size: 1.rem;
+.alt-name {
+    font-size: 1rem;
     font-weight: normal;
     color: #b0b0b0;
     margin-left: 8px;
@@ -387,6 +535,7 @@ h1 {
     color: #87ceeb;
 }
 
+/* Footer */
 .footer {
     margin-top: 40px;
     background: linear-gradient(145deg, #0a0a1a, #1a1a2e);
@@ -461,6 +610,7 @@ h1 {
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }
 
+/* Responsive Design */
 @media (max-width: 768px) {
     .top-runes {
         grid-template-columns: 1fr;
@@ -471,7 +621,8 @@ h1 {
         text-align: center;
     }
     
-    .results-summary h2 {
+    .results-summary h2,
+    .safezone-section h2 {
         font-size: 1.5rem;
     }
     
@@ -491,12 +642,26 @@ h1 {
         grid-template-columns: 1fr;
     }
     
-    .config-grid {
+    .config-grid,
+    .safezone-config {
         grid-template-columns: 1fr;
     }
     
     .rune-details {
         grid-template-columns: 1fr;
+    }
+    
+    .safezone-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+    }
+    
+    .safezone-option {
+        padding: 15px;
+    }
+    
+    .option-title {
+        font-size: 1.1rem;
     }
     
     .footer {
