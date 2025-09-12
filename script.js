@@ -43,27 +43,68 @@ function formatNumber(num) {
     return Math.abs(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
+// Função para lidar com exclusão mútua de equipamentos
+function handleEquipmentExclusion(changedElement) {
+    const id = changedElement.id;
+    
+    const spellbooks = ['beholder-spellbook', 'flame-spellbook', 'arboreal-tome'];
+    const boots = ['exordion-boots', 'soft-boots'];
+    
+    if (changedElement.checked) {
+        if (spellbooks.includes(id)) {
+            spellbooks.forEach(spellbookId => {
+                if (spellbookId !== id) {
+                    document.getElementById(spellbookId).checked = false;
+                }
+            });
+        }
+        
+        if (boots.includes(id)) {
+            boots.forEach(bootsId => {
+                if (bootsId !== id) {
+                    document.getElementById(bootsId).checked = false;
+                }
+            });
+        }
+    }
+    
+    // Atualiza cálculo após a mudança
+    document.getElementById("manaOutput").textContent = calculateManaRegen();
+}
+
 function calculateManaRegen() {
     let totalManaPerHour = 0;
     
     // Base regeneration
     if (document.getElementById('no-promotion').checked) {
-        totalManaPerHour += (2 / 4) * 3600; // 2 mana every 4 seconds
+        totalManaPerHour += (2 / 4) * 3600; // 2 mana a cada 4 segundos
     } else {
-        totalManaPerHour += (2 / 3) * 3600; // 2 mana every 3 seconds
+        totalManaPerHour += (2 / 3) * 3600; // 2 mana a cada 3 segundos
     }
     
-    // Equipment bonuses
+    // Equipamentos
     if (document.getElementById('exordion-ring').checked) {
-        totalManaPerHour += (1 / 4) * 3600; // 1 mana every 4 seconds
+        totalManaPerHour += (1 / 4) * 3600;
     }
     
     if (document.getElementById('exordion-boots').checked) {
-        totalManaPerHour += (1 / 3) * 3600; // 1 mana every 3 seconds
+        totalManaPerHour += (1 / 3) * 3600;
+    }
+    
+    if (document.getElementById('soft-boots').checked) {
+        totalManaPerHour += (1 / 2) * 3600;
     }
     
     if (document.getElementById('beholder-spellbook').checked) {
-        totalManaPerHour += (1 / 6) * 3600; // 1 mana every 6 seconds
+        totalManaPerHour += (1 / 6) * 3600;
+    }
+    
+    if (document.getElementById('flame-spellbook').checked) {
+        totalManaPerHour += (1 / 5) * 3600;
+    }
+    
+    if (document.getElementById('arboreal-tome').checked) {
+        totalManaPerHour += (1 / 2) * 3600;
     }
     
     // Zero soul penalty
@@ -73,6 +114,11 @@ function calculateManaRegen() {
     
     return Math.floor(totalManaPerHour);
 }
+
+// Conecta os eventos automaticamente
+document.querySelectorAll("input[type='checkbox'], input[type='radio']").forEach(el => {
+    el.addEventListener("change", () => handleEquipmentExclusion(el));
+});
 
 function createRuneCard(rune, index) {
     const costPerRune = rune.cost / rune.quantity;
