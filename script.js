@@ -38,9 +38,11 @@ const safezonePackages = [
     { hours: 720, coins: 90 }
 ];
 
+let userEditedProfitField = false;
+
 // Função para formatar números com separador de milhares
 function formatNumber(num) {
-    return Math.abs(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return num.toLocaleString('pt-BR');
 }
 
 // Função para lidar com exclusão mútua de equipamentos
@@ -260,19 +262,6 @@ function calculateSafezone() {
     const runeProfileField = document.getElementById('rune-profit-hour');
     let runeProfitPerHour = parseFloat(runeProfileField.value) || 0;
     
-    // Só preencher automaticamente se o campo estiver vazio
-    if (runeProfitPerHour === 0) {
-        const bestRuneProfit = document.getElementById('best-rune-profit').textContent;
-        if (bestRuneProfit && bestRuneProfit !== '-') {
-            // Usar regex mais robusta para extrair números decimais
-            const match = bestRuneProfit.match(/(\d+(?:\.\d+)?)/);
-            if (match) {
-                runeProfitPerHour = parseFloat(match[1]);
-                runeProfileField.value = runeProfitPerHour;
-            }
-        }
-    }
-    
     let bestValue = null;
     let bestEfficiency = -Infinity;
     
@@ -281,7 +270,7 @@ function calculateSafezone() {
         const costPerHour = totalCost / pkg.hours;
         const profitPerHour = runeProfitPerHour - costPerHour;
         const totalProfit = profitPerHour * pkg.hours;
-        const efficiency = profitPerHour / costPerHour; // Eficiência do investimento
+        const efficiency = profitPerHour / costPerHour;
         
         // Atualizar displays
         document.getElementById(`cost-${pkg.hours}`).textContent = formatNumber(Math.round(costPerHour));
@@ -293,7 +282,6 @@ function calculateSafezone() {
             profitElement.textContent = `${totalProfit >= 0 ? 'Lucro' : 'Prejuízo'}: ${formatNumber(Math.round(totalProfit))} gp`;
             profitElement.className = `profit-result ${totalProfit >= 0 ? 'positive' : 'negative'}`;
             
-            // Determinar o melhor custo-benefício
             if (profitPerHour > 0 && efficiency > bestEfficiency) {
                 bestValue = pkg.hours;
                 bestEfficiency = efficiency;
@@ -303,11 +291,9 @@ function calculateSafezone() {
             profitElement.className = 'profit-result';
         }
         
-        // Remover destaque anterior
         safezoneOption.classList.remove('best-value');
     });
     
-    // Destacar melhor opção
     if (bestValue !== null) {
         const bestOption = document.querySelector(`[data-hours="${bestValue}"]`);
         if (bestOption) {
@@ -321,27 +307,22 @@ function initializeCalculator() {
     const container = document.getElementById('runes-container');
     container.innerHTML = runes.map((rune, index) => createRuneCard(rune, index)).join('');
     
-    // Add event listeners for character configuration
-    document.querySelectorAll('input[name="promotion"]').forEach(radio => {
-        radio.addEventListener('change', calculateRunes);
-    });
+// Add event listeners for safezone
+    document.getElementById('coin-price').addEventListener('input', calculateSafezone);
+    document.getElementById('rune-profit-hour').addEventListener('input', calculateSafezone);
     
     document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
         checkbox.addEventListener('change', calculateRunes);
     });
-    
+
     // Add event listeners for rune prices
-    runes.forEach((_, index) => {
-        document.getElementById(`price-${index}`).addEventListener('input', calculateRunes);
-    });
-    
-    // Add event listeners for safezone
-    document.getElementById('coin-price').addEventListener('input', calculateSafezone);
-    document.getElementById('rune-profit-hour').addEventListener('input', calculateSafezone);
-    
-    // Initial calculations
-    calculateRunes();
-    calculateSafezone();
+runes.forEach((_, index) => {
+    document.getElementById(`price-${index}`).addEventListener('input', calculateRunes);
+});
+
+// Initial calculations
+calculateRunes();
+calculateSafezone();
 }
 
 // Initialize when page loads
