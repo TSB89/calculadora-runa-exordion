@@ -1,6 +1,6 @@
-# 📜 Calculadora de Runas - Tibia
+# 📜 Calculadora de Runas - Exordion
 
-Uma calculadora web interativa e responsiva para otimizar a produção de runas no MMORPG Tibia, desenvolvida com HTML, CSS e JavaScript vanilla.
+Uma calculadora web interativa e responsiva para otimizar a produção de runas no MMORPG OT Exordion, desenvolvida com HTML, CSS e JavaScript vanilla.
 
 ## 📖 Como Executar
 Você pode acessar o projeto de duas formas:  
